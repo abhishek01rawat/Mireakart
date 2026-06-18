@@ -72,7 +72,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // CORS
-pp.use(cors({
+app.use(cors({
   origin: function(origin, callback) {
     const allowedOrigins = [
       process.env.CLIENT_URL,
