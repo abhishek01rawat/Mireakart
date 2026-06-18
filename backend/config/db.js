@@ -1,46 +1,18 @@
 import mongoose from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
-
-let mongod = null;
 
 const connectDB = async () => {
   try {
-    let connUri = process.env.MONGO_URI;
-
-    // Standard local check or fallback
-    if (!connUri || connUri.includes('localhost') || connUri.includes('127.0.0.1')) {
-      console.log('Attempting to connect to local MongoDB database...');
-      try {
-        // Try connecting with a very short timeout so we fallback quickly
-        const conn = await mongoose.connect(connUri || 'mongodb://127.0.0.1:27017/mireakart', {
-          serverSelectionTimeoutMS: 2000
-        });
-        console.log(`MongoDB Connected locally: ${conn.connection.host}`);
-        return;
-      } catch (localErr) {
-        console.log('Local MongoDB not detected. Booting self-contained In-Memory Mongoose Database server...');
-        mongod = await MongoMemoryServer.create();
-        connUri = mongod.getUri();
-      }
-    } else {
-      console.log('Attempting connection to remote Atlas Cloud Cluster...');
-      try {
-        const conn = await mongoose.connect(connUri, {
-          serverSelectionTimeoutMS: 4000
-        });
-        console.log(`MongoDB Atlas Connected: ${conn.connection.host}`);
-        return;
-      } catch (atlasErr) {
-        console.log('Atlas Cloud connection failed. Booting self-contained In-Memory Mongoose Database server...');
-        mongod = await MongoMemoryServer.create();
-        connUri = mongod.getUri();
-      }
+    if (!process.env.MONGO_URI) {
+      throw new Error('MONGO_URI is not defined in environment variables');
     }
 
-    const conn = await mongoose.connect(connUri);
-    console.log(`In-Memory MongoDB Active & Connected: ${conn.connection.host}`);
+    console.log('Connecting to MongoDB Atlas...');
+
+    const conn = await mongoose.connect(process.env.MONGO_URI);
+
+    console.log(`MongoDB Atlas Connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error(`Critical Database Error: ${error.message}`);
+    console.error(`Database Connection Error: ${error.message}`);
     process.exit(1);
   }
 };
@@ -48,10 +20,10 @@ const connectDB = async () => {
 export const disconnectDB = async () => {
   try {
     await mongoose.disconnect();
-    if (mongod) {
-      await mongod.stop();
-    }
-  } catch (e) {}
+    console.log('MongoDB disconnected.');
+  } catch (e) {
+    console.error(`Disconnect error: ${e.message}`);
+  }
 };
 
 export default connectDB;
