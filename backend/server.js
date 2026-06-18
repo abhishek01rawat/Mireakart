@@ -30,6 +30,31 @@ dotenv.config();
 
 const app = express();
 
+// CORS
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://mireakart.vercel.app',
+  'https://mireakart-git-main-mirea.vercel.app',
+  process.env.CLIENT_URL,
+].filter(Boolean);
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS blocked: ${origin}`));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+};
+
+app.options('*', cors(corsOptions)); // ← handles preflight requests
+app.use(cors(corsOptions));
+
 // Security middleware
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
@@ -71,31 +96,8 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// CORS
-// CORS
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://localhost:3000',
-  'https://mireakart.vercel.app',
-  'https://mireakart-git-main-mirea.vercel.app',
-  process.env.CLIENT_URL,
-].filter(Boolean);
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error(`CORS blocked: ${origin}`));
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-};
 
-app.options('*', cors(corsOptions)); // ← handles preflight requests
-app.use(cors(corsOptions));
 
 // NoSQL Injection Sanitization
 app.use(sanitize);
