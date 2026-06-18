@@ -1,9 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /admin
-Disallow: /checkout
-Disallow: /profile
-Disallow: /orders
-Disallow: /wishlist
-
-Sitemap: https://mireakart.com/sitemap.xml
