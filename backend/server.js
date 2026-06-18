@@ -36,11 +36,24 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      connectSrc: ["'self'", process.env.BACKEND_URL, "https://api.razorpay.com", "https://api.stripe.com"],
+      connectSrc: [
+  "'self'",
+  "https://mireakart.vercel.app",
+  "https://mireakart-git-main-mirea.vercel.app",
+  "https://mireakart-api-f4lo.onrender.com",
+  "https://api.razorpay.com",
+  "https://api.stripe.com"
+],
       scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "blob:", process.env.BACKEND_URL, "https://res.cloudinary.com"],
+      imgSrc: [
+  "'self'", 
+  "data:", 
+  "blob:", 
+  "https://mireakart-api-f4lo.onrender.com",
+  "https://res.cloudinary.com"
+],
       objectSrc: ["'none'"],
     },
   },
@@ -59,8 +72,20 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // CORS
-app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+pp.use(cors({
+  origin: function(origin, callback) {
+    const allowedOrigins = [
+      process.env.CLIENT_URL,
+      'https://mireakart.vercel.app',
+      'https://mireakart-git-main-mirea.vercel.app',
+      'http://localhost:5173',
+    ];
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 
