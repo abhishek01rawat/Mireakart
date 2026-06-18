@@ -36,17 +36,14 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      connectSrc: ["'self'", "http://localhost:5000", "https://api.razorpay.com", "https://api.stripe.com"],
+      connectSrc: ["'self'", process.env.BACKEND_URL, "https://api.razorpay.com", "https://api.stripe.com"],
       scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "blob:", "http://localhost:5000", "https://res.cloudinary.com"],
+      imgSrc: ["'self'", "data:", "blob:", process.env.BACKEND_URL, "https://res.cloudinary.com"],
       objectSrc: ["'none'"],
     },
   },
-  xssFilter: true,
-  noSniff: true,
-  frameguard: { action: 'deny' },
 }));
 
 // Rate limiting
