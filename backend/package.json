@@ -30,7 +30,7 @@
     "slugify": "^1.6.6",
     "stripe": "^14.14.0"
   },
-  "Dependencies": {
-    "mongodb-memory-server": "^11.1.0",
+  "devDependencies": {
+    "nodemon": "^3.0.3"
   }
 }
