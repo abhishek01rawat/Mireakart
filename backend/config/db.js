@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+/* import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 let mongod = null;
@@ -52,6 +52,21 @@ export const disconnectDB = async () => {
       await mongod.stop();
     }
   } catch (e) {}
+};
+
+export default connectDB;
+*/
+
+import mongoose from 'mongoose';
+
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGO_URI);
+    console.log(`MongoDB Atlas Connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.error(`Database Connection Error: ${error.message}`);
+    process.exit(1);
+  }
 };
 
 export default connectDB;
